@@ -129,51 +129,37 @@ def terminal(board):
     # Return true since there are no moves remaining
     return True
 
-# TODO
+
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    return 1 if winner(board) is X
-    winning_player = winner(board)
-    if winning_player is X:
-        return 1
-    elif winning_player is O:
-        return -1
-    else:
-        return 0
+    # https://stackoverflow.com/questions/44636514/python-multiple-nested-ternary-expression
+    return 1 if winner(board) is X else -1 if winner(board) is O else 0
 
-def max_value(board):
+def get_best_move(board):
     """
-    Returns the maximum value the minimax tree if the oppostion plays optimally.
+    Returns the best move (value, action) pair for current board and player using Minimax.
     """
     if terminal(board):
-        return utility(board)
+        return (utility(board), None)
     
+    # Determine which player's move it is
+    current_player = player(board)
+
     # Set the starting value below all possible action values
-    value = -2
+    best_move = (-2 if current_player is X else 2, None)
 
+    # Check every action to determine the best one
     for action in actions(board):
-        value = max(value, min_value(result(board, action)))
+        action_result = get_best_move(result(board, action))
+        if ((current_player is X and action_result[0] > best_move[0]) or
+                (current_player is O and action_result[0] < best_move[0])):
+            best_move = (action_result[0], action)
 
-    return value
+    return best_move
 
-def min_value(board):
-    """
-    Returns the minimum value the minimax tree if the oppostion plays optimally.
-    """
-    if terminal(board):
-        return utility(board)
-    
-    # Set the starting value below all possible action values
-    value = 2
 
-    for action in actions(board):
-        value = min(value, max_value(result(board, action)))
-
-    return value
-
-# TODO
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
@@ -181,20 +167,4 @@ def minimax(board):
     if terminal(board):
         return None
     
-    best_action = None
-    if player(board) is X:
-        best_value = -2
-        for action in actions(board):
-            value = min_value(result(board, action))
-            if value > best_value:
-                best_action = action
-                best_value = value
-    else:
-        best_value = 2
-        for action in actions(board):
-            value = max_value(result(board, action))
-            if value < best_value:
-                best_action = action
-                best_value = value
-    
-    return best_action
+    return get_best_move(board)[1]
