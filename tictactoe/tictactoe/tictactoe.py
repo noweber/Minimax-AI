@@ -2,7 +2,6 @@
 Tic Tac Toe Player
 """
 
-from copy import deepcopy #TODO should I use result_board = [row[:] for row in board] instead?
 import math
 
 X = "X"
@@ -23,11 +22,12 @@ def player(board):
     """
     Returns player who has the next turn on a board.
     """
+    # https://stackoverflow.com/questions/43082149/simple-way-to-count-number-of-specific-elements-in-2d-array-python
     x_count = sum([row.count(X) for row in board])
     o_count = sum([row.count(O) for row in board])
     return O if o_count < x_count else X
 
-# TODO
+
 def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
@@ -39,16 +39,22 @@ def actions(board):
                 actions.append((i, j))
     return actions
 
-# TODO
+
 def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    # TODO: raise ValueError("action is not valid for board")
-    result_board = deepcopy(board)
-    if result_board[action[0]][action[1]] is EMPTY:
-        result_board[action[0]][action[1]] = player(result_board)
-    return result_board
+    # Make a deep copy of the current board
+    # https://stackoverflow.com/questions/6532881/how-to-make-a-copy-of-a-2d-array-in-python
+    # https://stackoverflow.com/questions/36968157/what-is-the-fastest-way-to-copy-a-2d-array-in-python
+    board_copy = [row[:] for row in board]
+
+    # Assign the space as the current player's symbol
+    if board_copy[action[0]][action[1]] is EMPTY:
+        board_copy[action[0]][action[1]] = player(board_copy)
+    else:
+        raise ValueError("action is not valid for board")
+    return board_copy
 
 # TODO
 def winner(board):
