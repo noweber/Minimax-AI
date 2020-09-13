@@ -56,16 +56,11 @@ def result(board, action):
         raise ValueError("action is not valid for board")
     return board_copy
 
-# TODO
+# TODO: simplify
 def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    # loser = player(board)
-    # if loser is X:
-    #     return O
-    # elif :
-    #     return X
     
     cell_values = {
         "X": 1,
@@ -128,9 +123,10 @@ def terminal(board):
         for i in range(len(board)):
             for j in range(len(board[i])):
                 if board[i][j] is EMPTY:
+                    # Stop as soon as an empty cell is found
                     return False
 
-    # Return true since there is no winner and there are no empty spaces remaining
+    # Return true since there are no moves remaining
     return True
 
 # TODO
@@ -138,6 +134,7 @@ def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
+    return 1 if winner(board) is X
     winning_player = winner(board)
     if winning_player is X:
         return 1
@@ -147,6 +144,9 @@ def utility(board):
         return 0
 
 def max_value(board):
+    """
+    Returns the maximum value the minimax tree if the oppostion plays optimally.
+    """
     if terminal(board):
         return utility(board)
     
@@ -159,6 +159,9 @@ def max_value(board):
     return value
 
 def min_value(board):
+    """
+    Returns the minimum value the minimax tree if the oppostion plays optimally.
+    """
     if terminal(board):
         return utility(board)
     
@@ -175,8 +178,6 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-
-    # TODO: if the board is terminal, return none
     if terminal(board):
         return None
     
