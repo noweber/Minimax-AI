@@ -18,19 +18,13 @@ def initial_state():
             [EMPTY, EMPTY, EMPTY],
             [EMPTY, EMPTY, EMPTY]]
 
-# TODO
+
 def player(board):
     """
     Returns player who has the next turn on a board.
     """
-    x_count = 0
-    o_count = 0
-    for row in board:
-        for cell in row:
-          if(cell is X):
-            x_count += 1
-          elif(cell is O):
-            o_count += 1
+    x_count = sum([row.count(X) for row in board])
+    o_count = sum([row.count(O) for row in board])
     return O if o_count < x_count else X
 
 # TODO
