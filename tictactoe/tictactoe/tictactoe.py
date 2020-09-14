@@ -32,9 +32,11 @@ def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
+    # Iterate through all rows and columns adding an action for open spaces.
     actions = []
     for i in range(len(board)):
         for j in range(len(board[i])):
+            # Anytime a cell is open, that makes it a possible action.
             if board[i][j] is EMPTY:
                 actions.append((i, j))
     return actions
@@ -53,7 +55,10 @@ def result(board, action):
     if board_copy[action[0]][action[1]] is EMPTY:
         board_copy[action[0]][action[1]] = player(board_copy)
     else:
+        # If the action argument was invalid, raise an exception.
         raise ValueError("action is not valid for board")
+
+    # Return the copied board with the new action in place.
     return board_copy
 
 
@@ -61,14 +66,31 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
+
+    # Create a dictionary to assign values for each possible key.
+    # These keys will be used to sum up the value across rows, columns, and diagonals.
     cell_values = {
         "X": 1,
         "O": -1,
         None: 0
     }
 
-    # Check for row-wise and column-wise terminal conditions
+    # Check for diagonal, row-wise, and column-wise terminal conditions
+    down_right_diagonal_value = 0
+    down_left_diagonal_value = 0
     for i in range(len(board)):
+
+        # These are the diagonal win condition checks
+        # Anytime a diagonal's sum is 3 or -3 then it is a win condition.
+        down_right_diagonal_value += cell_values[board[i][i]]
+        down_left_diagonal_value += cell_values[board[i][len(board) - 1 - i]]
+        if down_right_diagonal_value is 3 or down_left_diagonal_value is 3:
+            return X
+        elif down_right_diagonal_value is -3 or down_left_diagonal_value is -3:
+            return O
+
+        # These are the column and row win condition checks
+        # Anytime a row or column's sum is 3 or -3 then it is a win condition.
         row_value = 0
         column_value = 0
         for j in range(len(board[i])):
@@ -79,17 +101,6 @@ def winner(board):
         elif row_value is -3 or column_value is -3:
             return O
 
-    # Check for diagnoal win conditions
-    down_right_diagonal_value = 0
-    down_left_diagonal_value = 0
-    for i in range(len(board)):
-        down_right_diagonal_value += cell_values[board[i][i]]
-        down_left_diagonal_value += cell_values[board[i][len(board) - 1 - i]]
-        if down_right_diagonal_value is 3 or down_left_diagonal_value is 3:
-            return X
-        elif down_right_diagonal_value is -3 or down_left_diagonal_value is -3:
-            return O
-
     # Return None if no X or O win conditions were found
     return None
 
@@ -98,6 +109,7 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
+    # If there is a winner, than the game is over.
     if winner(board) is not None:
         return True
     else:
@@ -105,7 +117,8 @@ def terminal(board):
         for i in range(len(board)):
             for j in range(len(board[i])):
                 if board[i][j] is EMPTY:
-                    # Stop as soon as an empty cell is found
+                    # Stop as soon as an empty cell is found.
+                    # With no winner and an empty cell, the game is not over.
                     # (short-circuit removes need to call actions(board) here)
                     return False
 
@@ -125,7 +138,9 @@ def get_best_move(board):
     """
     Returns the best move (value, action) pair for current board and player using Minimax.
     """
+    # Return the utility of the current board if this is a terminal state.
     if terminal(board):
+        # The action is None because no further actions can be taken.
         return (utility(board), None)
     
     # Determine which player's move it is
@@ -136,11 +151,17 @@ def get_best_move(board):
 
     # Check every action to determine the best one
     for action in actions(board):
+        # Recursively get the best move for this action.
         action_result = get_best_move(result(board, action))
+        
+        # See if this action is better than a previous one.
+        # If it is better, store it.
         if ((current_player is X and action_result[0] > best_move[0]) or
                 (current_player is O and action_result[0] < best_move[0])):
             best_move = (action_result[0], action)
 
+    # Return the best available move.
+    # If multiple moves are equally good, this returns the first.
     return best_move
 
 
@@ -148,7 +169,9 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+    # Return None since no further moves can be made in a terminal state.
     if terminal(board):
         return None
     
+    # Use a recursive Minimax function to return the best available move.
     return get_best_move(board)[1]
