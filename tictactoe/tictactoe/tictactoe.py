@@ -61,50 +61,33 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    
     cell_values = {
         "X": 1,
         "O": -1,
         None: 0
     }
 
-    # Check for row-wise terminal conditions
+    # Check for row-wise and column-wise terminal conditions
     for i in range(len(board)):
         row_value = 0
-        for j in range(len(board[i])):
-            row_value += cell_values[board[i][j]]
-        if row_value is 3:
-            return X
-        elif row_value is -3:
-            return O
-
-    # Check for column-wise terminal conditions
-    # Note that this assumes the number of columns equals the number of rows.
-    for i in range(len(board)):
         column_value = 0
         for j in range(len(board[i])):
+            row_value += cell_values[board[i][j]]
             column_value += cell_values[board[j][i]]
-        if column_value is 3:
+        if row_value is 3 or column_value is 3:
             return X
-        elif column_value is -3:
+        elif row_value is -3 or column_value is -3:
             return O
 
-    # Check for down-right diagnoal win condition
-    diagonal_value = 0
+    # Check for diagnoal win conditions
+    down_right_diagonal_value = 0
+    down_left_diagonal_value = 0
     for i in range(len(board)):
-        diagonal_value += cell_values[board[i][i]]
-        if diagonal_value is 3:
+        down_right_diagonal_value += cell_values[board[i][i]]
+        down_left_diagonal_value += cell_values[board[i][len(board) - 1 - i]]
+        if down_right_diagonal_value is 3 or down_left_diagonal_value is 3:
             return X
-        elif diagonal_value is -3:
-            return O
-
-    # Check for down-left diagnoal win condition
-    diagonal_value = 0
-    for i in range(len(board)):
-        diagonal_value += cell_values[board[i][len(board) - 1 - i]]
-        if diagonal_value is 3:
-            return X
-        elif diagonal_value is -3:
+        elif down_right_diagonal_value is -3 or down_left_diagonal_value is -3:
             return O
 
     # Return None if no X or O win conditions were found
