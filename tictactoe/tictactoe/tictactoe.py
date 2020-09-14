@@ -56,7 +56,7 @@ def result(board, action):
         raise ValueError("action is not valid for board")
     return board_copy
 
-# TODO: simplify
+
 def winner(board):
     """
     Returns the winner of the game, if there is one.
@@ -119,6 +119,7 @@ def utility(board):
     """
     # https://stackoverflow.com/questions/44636514/python-multiple-nested-ternary-expression
     return 1 if winner(board) is X else -1 if winner(board) is O else 0
+
 
 def get_best_move(board):
     """
