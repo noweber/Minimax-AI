@@ -98,15 +98,15 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    winning_player = winner(board)
-    if winning_player is not None:
+    if winner(board) is not None:
         return True
     else:
-        # Check if the board has any possible remaining moves (any empty spaces)
+        # Check if the board has any empty spaces
         for i in range(len(board)):
             for j in range(len(board[i])):
                 if board[i][j] is EMPTY:
                     # Stop as soon as an empty cell is found
+                    # (short-circuit removes need to call actions(board) here)
                     return False
 
     # Return true since there are no moves remaining
